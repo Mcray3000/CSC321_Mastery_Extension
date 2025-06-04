@@ -1,0 +1,7 @@
+numpy 
+scipy 
+soundfile 
+sounddevice 
+matplotlib
+adversarial-robustness-toolbox
+librosa
