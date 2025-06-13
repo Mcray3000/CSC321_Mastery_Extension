@@ -6,7 +6,7 @@
 * **verbose** Shows a loading bar
 
 ## Goal Phrase: 'Hey Siri, Open the door and turn off the lights!'
-'''
+```
 attack = ProjectedGradientDescent(
     estimator=estimator,
     eps=.05,             # Maximum perturbation (allowed)
@@ -15,7 +15,7 @@ attack = ProjectedGradientDescent(
     targeted=True,       # This is a targeted attack
     verbose=False         # Show a progress bar
 )
-'''
+```
 
 
 --- Transcription Result For voice_sample.wav ---
@@ -47,7 +47,7 @@ Hey Siri, Open the door and turn off the lights!
 ----------------------------
 ### 10mins 10seconds
 
-'''
+```
 attack = ProjectedGradientDescent(
     estimator=estimator,
     eps=.01,             # Maximum perturbation allowed
@@ -56,7 +56,7 @@ attack = ProjectedGradientDescent(
     targeted=True,       # This is a targeted attack
     verbose=False         # Show a progress bar
 )
-'''
+```
 --- Transcription Result For voice_sample.wav ---
 Hey Jennifer, what's the weather like tomorrow?
 
