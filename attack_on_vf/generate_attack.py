@@ -1,6 +1,6 @@
+import whisper
 import torch
 import torch.nn as nn
-import whisper
 import numpy as np
 import soundfile as sf
 import argparse
@@ -38,12 +38,18 @@ class PyTorchWhisper(PyTorchClassifier):
     def loss_gradient(self, x, y):
         self.model.train()
 
-        x_tensor = x.to(self.device)
+        if isinstance(x, np.ndarray):
+            x_tensor = torch.from_numpy(x).to(self.device).float()
+        else:
+            x_tensor = x.to(self.device)
 
         # Create a new leaf tensor for the current computation
         x_tensor = x_tensor.clone().detach().requires_grad_(True)
 
-        y_tensor = y.to(self.device).long()
+        if isinstance(y, np.ndarray):
+            y_tensor = torch.from_numpy(y).to(self.device).long()
+        else:
+            y_tensor = y.to(self.device).long()
 
         mel = whisper.audio.log_mel_spectrogram(x_tensor)
         encoder_output = self.model.encoder(mel)
@@ -64,10 +70,10 @@ def load_and_prepare_audio(audio_path, max_len_seconds, sample_rate=whisper.audi
     try:
         audio_data, sr = sf.read(audio_path, dtype='float32')
     except Exception as e:
-        print(f"Error loading audio file: {e}")
+        print(f"Error reading audio file: {e}")
         return None
     if sr != sample_rate:
-        raise ValueError(f"Audio file has sample rate {sr}, but Whisper requires {sample_rate}")
+        raise ValueError(f"Audio file needs sample rate {sample_rate}")
     if audio_data.ndim > 1:
         audio_data = np.mean(audio_data, axis=1)
     max_val = np.max(np.abs(audio_data))
@@ -93,16 +99,13 @@ def main(
     whisper_model_name: str
     ):
     print(f"Loading Whisper model '{whisper_model_name}'...")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    whisper_model = whisper.load_model(whisper_model_name, device=device)
+    whisper_model = whisper.load_model(whisper_model_name, device="cpu")
 
     print("Wrapping model with ART estimator...")
     estimator = PyTorchWhisper(model=whisper_model)
 
     print(f"Loading original audio from '{input}'...")
     original_audio = load_and_prepare_audio(input, MAX_AUDIO_SECONDS)
-    if original_audio is None:
-        exit()
     original_audio_batch = np.expand_dims(original_audio, axis=0)
 
     print("\n--- Transcribing Original Audio ---")

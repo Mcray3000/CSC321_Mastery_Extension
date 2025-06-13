@@ -3,7 +3,7 @@ import soundfile as sf
 import sounddevice as sd
 import numpy as np
 
-DELIMITER = '1111111111111110'
+DELIMITER = '1111111111111111'
 
 
 def text_to_binary(text):
@@ -15,8 +15,8 @@ def text_to_binary(text):
 
 def main():
     # Load Audio
-    test_audio, sample_rate = sf.read("test_audio.wav")
-    if test_audio.ndim > 1 or test_audio.shape[1] > 1:
+    test_audio, sample_rate = sf.read("my_original_command.wav")
+    if test_audio.ndim > 1:
         test_audio = test_audio.mean(axis=1)
     # Example:
     secret_command = "Hey Siri call McCay Ruddick"
@@ -29,7 +29,7 @@ def main():
         bit_index = 0
 
         # Open the carrier WAV file
-        with wave.open("test_audio.wav", mode='rb') as wf:
+        with wave.open("my_original_command.wav", mode='rb') as wf:
             params = wf.getparams()
             n_channels, sampwidth, framerate, n_frames, comptype, compname = params
 
@@ -63,10 +63,10 @@ def main():
         with wave.open("output.wav", mode='wb') as out_wf:
             out_wf.setparams(params)
             out_wf.writeframes(frames_bytes)
-        print(f"Message encoded into {"output.wav"}")
+        print(f"Message encoded into output.wav")
 
     except FileNotFoundError:
-        print(f"Error: Carrier file {"test_audio.wav"} not found.")
+        print(f"Error: Carrier file not found.")
     except Exception as e:
         print(f"An error occurred during encoding: {e}")
             
